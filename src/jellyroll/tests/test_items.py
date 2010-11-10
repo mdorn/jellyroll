@@ -108,9 +108,25 @@ class VideoTest(TestCase):
     def testYouTube(self):
         v = Video.objects.get(pk=2)
         self.assertEqual(v.embed_url, "http://www.youtube.com/v/1gvGDsIYrrQ")
+
+class PurchaseTest(TestCase):
+    fixtures = ["purchases.json"]
         
+    def testItemWorkage(self):
+        i = Item.objects.get(content_type=CT(Purchase), object_id="1")
+        self.assertEqual(i.url, i.object.url)
+        self.assertEqual(i.object_str, str(i.object))
+
 class ItemTest(TestCase):
-    fixtures = ["bookmarks.json", "photos.json", "trac.json", "tracks.json", "videos.json", "websearches.json"]
+    fixtures = [
+        "bookmarks.json", 
+        "photos.json", 
+        "trac.json", 
+        "tracks.json", 
+        "videos.json", 
+        "websearches.json", 
+        "purchases.json"
+    ]
     
     def testSorting(self):
         items = list(Item.objects.all())
@@ -123,4 +139,4 @@ class ItemTest(TestCase):
         self.assertEqual(Item.objects.models_by_name["track"], Track)
         self.assertEqual(Item.objects.models_by_name["video"], Video)
         self.assertEqual(Item.objects.models_by_name["websearch"], WebSearch)
-        
+        self.assertEqual(Item.objects.models_by_name["purchase"], Purchase)

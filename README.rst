@@ -16,6 +16,7 @@ Optional
 * GitPython (for Git support)
 * pysvn (for SVN support)
 * feedparser (for YouTube support)
+* oauth2 (for Netflix support)
 
 Installation
 ------------

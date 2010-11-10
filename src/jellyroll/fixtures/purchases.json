@@ -1,0 +1,24 @@
+[
+    {
+        "pk": 1, 
+        "model": "jellyroll.purchase", 
+        "fields": {
+            "url": "http://www.netflix.com/Movie/Manufactured_Landscapes/70059641", 
+            "rating": "", 
+            "image_url": "http://cdn-1.nflximg.com/us/boxshots/tiny/70059641.jpg", 
+            "description": "", 
+            "title": "Manufactured Landscapes"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "jellyroll.purchase", 
+        "fields": {
+            "url": "http://www.netflix.com/Movie/The_Passenger/70042799", 
+            "rating": "", 
+            "image_url": "http://cdn-9.nflximg.com/us/boxshots/tiny/70042799.jpg", 
+            "description": "", 
+            "title": "The Passenger"
+        }
+    }
+]

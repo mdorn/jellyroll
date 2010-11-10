@@ -2,6 +2,7 @@ import django.forms
 from django.contrib import admin
 from jellyroll.models import Item, Bookmark, Track, Photo, WebSearch, Message
 from jellyroll.models import WebSearchResult, Video, CodeRepository, CodeCommit
+from jellyroll.models import Purchase
 
 class ItemAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
@@ -55,6 +56,10 @@ class CodeCommitAdmin(admin.ModelAdmin):
     list_filter = ('repository',)
     search_fields = ('message',)
 
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'url')
+    search_fields = ('title', 'description')
+
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Bookmark, BookmarkAdmin)
 admin.site.register(Track, TrackAdmin)
@@ -64,4 +69,4 @@ admin.site.register(Message, MessageAdmin)
 admin.site.register(Video, VideoAdmin)
 admin.site.register(CodeRepository, CodeRepositoryAdmin)
 admin.site.register(CodeCommit, CodeCommitAdmin)
-
+admin.site.register(Purchase, PurchaseAdmin)

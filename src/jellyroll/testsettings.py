@@ -12,7 +12,10 @@ JELLYROLL_PROVIDERS = ['jellyroll.providers.*']
 # the APIs anyway.
 DELICIOUS_USERNAME = FLICKR_USERNAME = GOOGLE_USERNAME = LASTFM_USERNAME \
                    = TWITTER_USERNAME = YOUTUBE_USERNAME \
-                   = GOOGLE_LATITUDE_USER_ID = 'jellyroll'
+                   = GOOGLE_LATITUDE_USER_ID \
+                   = NETFLIX_CONSUMER_KEY = NETFLIX_CONSUMER_SECRET \
+                   = NETFLIX_OAUTH_TOKEN = NETFLIX_OAUTH_TOKEN_SECRET \
+                   =  'jellyroll'
 DELICIOUS_PASSWORD = GOOGLE_PASSWORD = 'password'
 FLICKR_API_KEY = 'apikey'
 FLICKR_USER_ID = 'userid'

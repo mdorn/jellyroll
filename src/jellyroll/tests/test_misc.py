@@ -14,6 +14,7 @@ class MiscTests(unittest.TestCase):
             'jellyroll.providers.svn',
             'jellyroll.providers.twitter',
             'jellyroll.providers.youtube',
+            'jellyroll.providers.netflix',            
         ]
         expanded.sort()
         expected.sort()

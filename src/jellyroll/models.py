@@ -375,7 +375,20 @@ class Location(models.Model):
     @property
     def url(self):
         return "http://maps.google.com/maps?q=%s,%s" % (self.longitude, self.latitude)
-        
+
+class Purchase(models.Model):
+    """
+    A purchase (eg. from Amazon.com) or a rental (eg. Netflix)
+    """
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=1000)
+    url = models.URLField()
+    image_url = models.URLField()
+    rating = models.CharField(max_length=10)
+    
+    def __unicode__(self):
+        return self.title
+
 # Register item objects to be "followed"
 Item.objects.follow_model(Bookmark)
 Item.objects.follow_model(Track)
@@ -385,3 +398,4 @@ Item.objects.follow_model(Video)
 Item.objects.follow_model(CodeCommit)
 Item.objects.follow_model(Message)
 Item.objects.follow_model(Location)
+Item.objects.follow_model(Purchase)
