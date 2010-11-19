@@ -389,6 +389,29 @@ class Purchase(models.Model):
     def __unicode__(self):
         return self.title
 
+FEED_TYPE_CHOICES = (('atom', 'Atom'),)
+
+class Feed(models.Model):
+    """
+    An Atom or RSS feed
+    """
+    type = models.CharField(max_length=10, choices=FEED_TYPE_CHOICES)
+    title = models.CharField(max_length=255)
+    url = models.URLField(max_length=200)
+    
+    def __unicode__(self):
+        return self.title    
+
+class FeedEntry(models.Model):
+    feed = models.ForeignKey(Feed)
+    title = models.CharField(max_length=255)
+    url = models.URLField(max_length=200)
+    description = models.CharField(max_length=1000)
+    text = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return self.title
+
 # Register item objects to be "followed"
 Item.objects.follow_model(Bookmark)
 Item.objects.follow_model(Track)
@@ -399,3 +422,4 @@ Item.objects.follow_model(CodeCommit)
 Item.objects.follow_model(Message)
 Item.objects.follow_model(Location)
 Item.objects.follow_model(Purchase)
+Item.objects.follow_model(FeedEntry)

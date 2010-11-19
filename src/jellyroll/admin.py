@@ -2,7 +2,7 @@ import django.forms
 from django.contrib import admin
 from jellyroll.models import Item, Bookmark, Track, Photo, WebSearch, Message
 from jellyroll.models import WebSearchResult, Video, CodeRepository, CodeCommit
-from jellyroll.models import Purchase
+from jellyroll.models import Purchase, Feed, FeedEntry
 
 class ItemAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
@@ -60,6 +60,13 @@ class PurchaseAdmin(admin.ModelAdmin):
     list_display = ('title', 'url')
     search_fields = ('title', 'description')
 
+class FeedAdmin(admin.ModelAdmin):
+    list_display = ('type', 'title', 'url')
+
+class FeedEntryAdmin(admin.ModelAdmin):
+    list_display = ('feed', 'title')
+    search_fields = ('title', 'description', 'text',)
+
 admin.site.register(Item, ItemAdmin)
 admin.site.register(Bookmark, BookmarkAdmin)
 admin.site.register(Track, TrackAdmin)
@@ -70,3 +77,5 @@ admin.site.register(Video, VideoAdmin)
 admin.site.register(CodeRepository, CodeRepositoryAdmin)
 admin.site.register(CodeCommit, CodeCommitAdmin)
 admin.site.register(Purchase, PurchaseAdmin)
+admin.site.register(Feed, FeedAdmin)
+admin.site.register(FeedEntry, FeedEntryAdmin)

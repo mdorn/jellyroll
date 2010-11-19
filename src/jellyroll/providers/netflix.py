@@ -38,6 +38,12 @@ from jellyroll.providers import utils
 
 log = logging.getLogger("jellyroll.providers.netflix")
 
+class NetflixError(Exception):
+    def __init__(self, code, message):
+        self.code, self.message = code, message
+    def __str__(self):
+        return 'NetflixError %s: %s' % (self.code, self.message)
+
 class NetflixClient(object):
     '''
     A mini Netflix API client
@@ -66,7 +72,7 @@ class NetflixClient(object):
             'oauth_nonce': oauth.generate_nonce(),
             'oauth_timestamp': int(time.time()),
             'output': 'json',
-            'max_results': '10' # up to 100 legally, but will give back more (200?)
+            'max_results': '20' # up to 100 legally, but will give back more (200?)
         }
         if self.updated_min:
             params['updated_min'] = self.updated_min
@@ -77,7 +83,10 @@ class NetflixClient(object):
         req.sign_request(signature_method, consumer, token)
 
         url = req.to_url()
-        return utils.getjson(url)
+        json = utils.getjson(url)
+        if json.has_key('status'):
+            raise NetflixError(json['status']['status_code'], json['status']['message'])
+        return json
 
 #
 # Public API
@@ -105,6 +114,10 @@ def update():
 
     netflix = NetflixClient(oauth_token, oauth_token_secret, updated_min)
     results = netflix.rental_history.returned()
+    
+    print results
+    import sys
+    sys.exit()
     
     if results['rental_history'].has_key('rental_history_item'):
         log.info('Processing %s results.' % results['rental_history']['number_of_results'])
