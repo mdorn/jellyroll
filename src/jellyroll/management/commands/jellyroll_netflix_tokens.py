@@ -3,6 +3,7 @@ import optparse
 import urllib
 import oauth2 as oauth
 import cgi # parse_qsl is in urlparse in Python2.6
+import sys
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -10,7 +11,6 @@ from django.conf import settings
 REQUEST_TOKEN_URL = 'http://api.netflix.com/oauth/request_token'
 ACCESS_TOKEN_URL = 'http://api.netflix.com/oauth/access_token'
 AUTHORIZE_URL = 'https://api-user.netflix.com/oauth/login'
-NETFLIX_APP_NAME = 'jellyroll-netflix-provider'
 
 class Command(BaseCommand):
     
@@ -18,16 +18,19 @@ class Command(BaseCommand):
         self.get_request_token()
 
     def get_request_token(self):
-        # Adapted from example usage at https://github.com/simplegeo/python-oauth2
+        # Adapted from example usage docs at https://github.com/simplegeo/python-oauth2
         consumer = oauth.Consumer(settings.NETFLIX_CONSUMER_KEY, settings.NETFLIX_CONSUMER_SECRET)
         client = oauth.Client(consumer)
         resp, content = client.request(REQUEST_TOKEN_URL, "GET")
+        if resp['status'] != '200':
+            print 'Error:', resp['status'], content
+            sys.exit()
         request_token = dict(cgi.parse_qsl(content))
 
         authorize_url_dict = {
             'oauth_token': request_token['oauth_token'],
             'oauth_consumer_key': settings.NETFLIX_CONSUMER_KEY,
-            'application_name': NETFLIX_APP_NAME
+            'application_name': settings.NETFLIX_APP_NAME # TODO: is this really required?
         }
         # oauth_callback unnecessary in this case
 

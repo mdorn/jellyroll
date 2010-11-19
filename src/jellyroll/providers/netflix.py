@@ -1,9 +1,12 @@
 """
 Provider for Netflix user history. Currently gets recently returned DVDs.
+Future versions should allow for other queries.
 
 Currently requires creation of Netflix API tokens for settings.py 
-using ``./manage.py jellyroll_netflix_tokens``. Set ``NETFLIX_CONSUMER_KEY``
-and ``NETFLIX_CONSUMER_SECRET`` from your Netflix API account and then run.
+using ``./manage.py jellyroll_netflix_tokens``. Set ``NETFLIX_CONSUMER_KEY``, 
+``NETFLIX_CONSUMER_SECRET`` and ``NETFLIX_APP_NAME`` from your Netflix API 
+account and then run. Follow the instructions given in the output to
+add the indicated settings.
 
 Required settings.py values:
 
@@ -11,15 +14,17 @@ Required settings.py values:
     * ``NETFLIX_CONSUMER_SECRET``
     * ``NETFLIX_OAUTH_TOKEN``
     * ``NETFLIX_OAUTH_TOKEN_SECRET``
+    * ``NETFLIX_APP_NAME``
 
 Optional settings.py values:
 
-    * ``NETFLIX_TAG_ALL``: a string that all items will be tagged with (eg. "film")
-    * ``NETFLIX_TAGS_FROM_CATEGORIES`` -- boolean indicating whether to create tags
-      from Netflix categories
-    * ``NETFLIX_TAG_PROCESSOR``: a function that takes a list of Netflix categories
-      (e.g. ``["Foreign Art-House Thrillers", "German Language"]``) and returns a list
-      of tags created by your function's custom logic.
+    * ``NETFLIX_TAG_ALL``: a string that all items will be tagged with (eg. 
+      "film")
+    * ``NETFLIX_TAGS_FROM_CATEGORIES`` -- boolean indicating whether to 
+        create tags from Netflix categories
+    * ``NETFLIX_TAG_PROCESSOR``: a function that takes a list of Netflix 
+        categories (e.g. ``["Foreign Art-House Thrillers", "German Language"]``)
+        and returns a list of tags created by your function's custom logic.
 """
 from datetime import datetime
 import hashlib
@@ -37,6 +42,12 @@ from jellyroll.models import Purchase, Item
 from jellyroll.providers import utils
 
 log = logging.getLogger("jellyroll.providers.netflix")
+
+class NetflixError(Exception):
+    def __init__(self, code, message):
+        self.code, self.message = code, message
+    def __str__(self):
+        return 'NetflixError %s: %s' % (self.code, self.message)
 
 class NetflixClient(object):
     '''
@@ -66,7 +77,7 @@ class NetflixClient(object):
             'oauth_nonce': oauth.generate_nonce(),
             'oauth_timestamp': int(time.time()),
             'output': 'json',
-            'max_results': '10' # up to 100 legally, but will give back more (200?)
+            'max_results': '20' # up to 100 legally, but will give back more (200?)
         }
         if self.updated_min:
             params['updated_min'] = self.updated_min
@@ -77,7 +88,10 @@ class NetflixClient(object):
         req.sign_request(signature_method, consumer, token)
 
         url = req.to_url()
-        return utils.getjson(url)
+        json = utils.getjson(url)
+        if json.has_key('status'):
+            raise NetflixError(json['status']['status_code'], json['status']['message'])
+        return json
 
 #
 # Public API
@@ -92,7 +106,6 @@ def enabled():
     return ok
 
 def update():
-    # FIXME: below values should both be stored in/retrieved from DB
     oauth_token = settings.NETFLIX_OAUTH_TOKEN
     oauth_token_secret = settings.NETFLIX_OAUTH_TOKEN_SECRET
 
@@ -154,7 +167,6 @@ def _handle_rental(title, link, image_url, tags, timestamp):
         url = link,
         image_url = image_url,
     )
-    # if not created:
     
     return Item.objects.create_or_update(
         instance = i, 
