@@ -115,10 +115,6 @@ def update():
     netflix = NetflixClient(oauth_token, oauth_token_secret, updated_min)
     results = netflix.rental_history.returned()
     
-    print results
-    import sys
-    sys.exit()
-    
     if results['rental_history'].has_key('rental_history_item'):
         log.info('Processing %s results.' % results['rental_history']['number_of_results'])
         if isinstance(results['rental_history']['rental_history_item'], dict):
