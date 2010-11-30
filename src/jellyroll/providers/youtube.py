@@ -32,8 +32,10 @@ def update():
         for entry in feed.entries:            
             if 'link' in entry:
                 url = entry.link
+                video_id = entry.videoid
             elif 'yt_videoid' in entry:
                 url = 'http://www.youtube.com/watch?v=%s' % entry.yt_videoid
+                video_id = entry.yt_videoid
             else:
                 log.error("Video '%s' appears to have no link" % (entry.tite))
                 continue
@@ -43,6 +45,7 @@ def update():
                 url = url,
                 tags = " ".join(t['term'] for t in entry.tags if t['scheme'] == TAG_SCHEME),
                 timestamp = datetime.datetime(*entry.published_parsed[:6]),
+                source_id = video_id
             )
         if len(feed.entries) < max_results:
             log.debug("Ran out of results; finishing.")
@@ -54,7 +57,7 @@ def update():
 #
 
 @transaction.commit_on_success
-def _handle_video(title, url, tags, timestamp):
+def _handle_video(title, url, tags, timestamp, source_id):
     log.debug("Handling video: %s" % smart_str(title))
     source = VideoSource.objects.get(name="YouTube")
     
@@ -78,4 +81,5 @@ def _handle_video(title, url, tags, timestamp):
             timestamp = timestamp,
             tags = tags,
             source = __name__,
+            source_id = source_id
         )
