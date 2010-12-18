@@ -46,7 +46,7 @@ class FeedAPI(object):
     
         d = feedparser.parse(feed.url)
         for i in d['entries']:
-            text = None
+            text = ''
             title = i['title']
             if i.has_key('summary'):
                 description = i['summary']
