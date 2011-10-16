@@ -74,7 +74,7 @@ def update():
 
 def _update_bookmarks_from_date(delicious, dt):
     log.debug("Reading bookmarks from %s", dt)
-    xml = delicious.posts.get(dt=dt.strftime("%Y-%m-%d"))
+    xml = delicious.posts.get(dt=dt.strftime("%Y-%m-%d") + "T00:00:00Z")
     for post in xml.getiterator('post'):
         info = dict((k, smart_unicode(post.get(k))) for k in post.keys())
         if (info.has_key("shared") and settings.DELICIOUS_GETDNS) or (not info.has_key("shared")):
